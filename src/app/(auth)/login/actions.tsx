@@ -12,7 +12,22 @@ export async function login() {
     },
   });
 
+  if (error) {
+    console.error("Logout error:", error);
+  }
+
   if (data.url) {
     redirect(data.url); // use the redirect API for your server framework
+  }
+}
+
+export async function logout() {
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signOut();
+
+  if (error) {
+    console.error("Logout error:", error);
+  } else {
+    redirect("/login");
   }
 }
