@@ -1,4 +1,5 @@
 import {
+    AddressSuggestion,
   GooglePlaceAutocompleteApiResponse,
   RestaurantSuggestion,
 } from "@/types";
@@ -8,11 +9,6 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const input = searchParams.get("input");
   const sessionToken = searchParams.get("sessionToken");
-  const lat = searchParams.get("lat");
-  const lng = searchParams.get("lng");
-
-  // console.log("Input:", input);
-  // console.log("Session Token:", sessionToken);
 
   if (!input) {
   return NextResponse.json({ error: "入力が必要です" }, { status: 400 });
@@ -35,15 +31,15 @@ export async function GET(request: NextRequest) {
     };
 
     const requestBody = {
-      includeQueryPredictions: true,
+      //   includeQueryPredictions: true,
       sessionToken: sessionToken,
       input: input,
-      includedPrimaryTypes: ["restaurant"],
+      //   includedPrimaryTypes: ["restaurant"],
       locationBias: {
         circle: {
           center: {
-            latitude: lat,
-            longitude: lng,
+            latitude: 35.6812855,
+            longitude: 139.447112,
           },
           radius: 1000.0,
         },
@@ -73,36 +69,21 @@ export async function GET(request: NextRequest) {
 
     const suggestions = data.suggestions ?? [];
 
-    //console.log("Suggestions:", suggestions);
-
-    const results = suggestions
-      .map((suggestion) => {
-        if (
-          suggestion.placePrediction &&
-          suggestion.placePrediction.placeId &&
-          suggestion.placePrediction.structuredFormat?.mainText?.text
-        ) {
-          return {
-            type: "placePrediction",
-            placeId: suggestion.placePrediction.placeId,
-            placeName:
-              suggestion.placePrediction.structuredFormat?.mainText?.text,
-          };
-        } else if (
-          suggestion.queryPrediction &&
-          suggestion.queryPrediction.text?.text
-        ) {
-          return {
-            type: "queryPrediction",
-            placeName: suggestion.queryPrediction.text?.text,
-          };
+    const results = suggestions.map((suggestion) => {
+        return {
+            placeId: suggestion.placePrediction?.placeId,
+            placeName: suggestion.placePrediction?.structuredFormat?.mainText?.text,
+            address_text: suggestion.placePrediction?.structuredFormat?.secondaryText?.text
         }
-        return undefined;
-      })
-      .filter(
-        (suggestion): suggestion is RestaurantSuggestion =>
-          !!suggestion
+    }).filter(
+        (suggestion): suggestion is AddressSuggestion =>
+          !!suggestion.placeId &&
+        !!suggestion.placeName &&
+        !!suggestion.address_text
       );
+    //   console.log("suggestion", results);
+
+    
     return NextResponse.json(results);
   } catch (error) {
     console.error("Error in autocomplete route:", error);

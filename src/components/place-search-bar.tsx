@@ -13,7 +13,12 @@ import { RestaurantSuggestion } from "@/types";
 import { AlertCircle, LoaderCircle, MapPin, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export default function PlaeSearchBar() {
+interface PlaeSearchBarProps {
+  lat: number;
+  lng: number;
+}
+
+export default function PlaeSearchBar({ lat, lng }: PlaeSearchBarProps) {
   const [open, setOpen] = useState(false);
   const [inputText, setInputText] = useState("");
   const [sessionToken, setSessionToken] = useState(uuidv4());
@@ -33,7 +38,7 @@ export default function PlaeSearchBar() {
 
     try {
       const response = await fetch(
-        `/api/restaurant/autocomplete?input=${input}&sessionToken=${sessionToken}`
+        `/api/restaurant/autocomplete?input=${input}&sessionToken=${sessionToken}&lat=${lat}&lng=${lng}`
       );
 
       if (!response.ok) {

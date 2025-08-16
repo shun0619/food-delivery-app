@@ -3,14 +3,21 @@ import RestaurantCard from "@/components/restaurant-card";
 import RestaurantList from "@/components/restaurant-list";
 import Categories from "@/components/categories";
 import Section from "@/components/ui/section";
-import { fetchRamenRestaurants, fetchRestaurants } from "@/lib/restaurants/api";
+import { fetchLocation, fetchRamenRestaurants, fetchRestaurants } from "@/lib/restaurants/api";
 
 export default async function Home() {
+  const {lat,lng} = await fetchLocation();
+
+  // 緯度・経度が取得できない場合は住所登録を促す
+  if (lat === undefined || lng === undefined) {
+    return <p>住所を登録してください。</p>;
+  }
+
   const { data: nearbyRestaurants, error: nearbyRestaurantsError } =
-    await fetchRestaurants();
+    await fetchRestaurants(lat,lng);
 
   const { data: nearbyRamenRestaurants, error: nearbyRamenRestaurantsError } =
-    await fetchRamenRestaurants();
+    await fetchRamenRestaurants(lat,lng);
 
   return (
     <>
