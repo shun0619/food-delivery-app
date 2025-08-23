@@ -10,7 +10,7 @@ export async function transformPlaceResults(restaurants: PlaceSearchResult[]) {
     // photoUrl: restaurant.photos?.[0]?.name
     //   ? await getPhotoUrl(restaurant.photos[0].name)
     //   : "/no_image.png",
-    photoUrl: "/no_image.png",
+    photoUrl: "/images/no_image.png",
   }));
 
 

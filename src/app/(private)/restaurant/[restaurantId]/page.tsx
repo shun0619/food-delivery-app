@@ -29,7 +29,7 @@ export default async function RestaurantPage({
     ? await fetchCategoryMenus(primaryType, searchMenu)
     : { data: [] };
 
-  console.log("data", categoryMenus);
+  // console.log("data", categoryMenus);
 
   if (error) notFound();
   return (
@@ -69,7 +69,7 @@ export default async function RestaurantPage({
       {!categoryMenus ? (
         <p>{menusError}</p>
       ) : categoryMenus.length > 0 ? (
-        <MenuContent categoryMenus={categoryMenus} />
+        <MenuContent categoryMenus={categoryMenus} restaurantId={restaurantId}/>
       ) : (
         <p>メニューが見つかりません</p>
       )}

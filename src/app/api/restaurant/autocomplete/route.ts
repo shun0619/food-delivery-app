@@ -15,12 +15,12 @@ export async function GET(request: NextRequest) {
   // console.log("Session Token:", sessionToken);
 
   if (!input) {
-  return NextResponse.json({ error: "入力が必要です" }, { status: 400 });
+    return NextResponse.json({ error: "入力が必要です" }, { status: 400 });
   }
 
   if (!sessionToken) {
     return NextResponse.json(
-  { error: "セッショントークンが必要です" },
+      { error: "セッショントークンが必要です" },
       { status: 400 }
     );
   }
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
       console.error(errorData);
       return NextResponse.json(
         {
-          error: `Autocomplete request failed: ${response.status}`,
+          error: `予期せぬエラーが発生しました。: ${response.status}`,
         },
         { status: 500 }
       );
@@ -99,13 +99,13 @@ export async function GET(request: NextRequest) {
         }
         return undefined;
       })
-      .filter(
-        (suggestion): suggestion is RestaurantSuggestion =>
-          !!suggestion
-      );
+      .filter((suggestion): suggestion is RestaurantSuggestion => !!suggestion);
     return NextResponse.json(results);
   } catch (error) {
     console.error("Error in autocomplete route:", error);
-  return NextResponse.json({ error: "サーバー内部でエラーが発生しました" });
+    return NextResponse.json(
+      { error: "予期せぬエラーが発生しました。" },
+      { status: 500 }
+    );
   }
 }

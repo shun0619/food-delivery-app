@@ -1,5 +1,5 @@
 import {
-    AddressSuggestion,
+  AddressSuggestion,
   GooglePlaceAutocompleteApiResponse,
   RestaurantSuggestion,
 } from "@/types";
@@ -11,12 +11,12 @@ export async function GET(request: NextRequest) {
   const sessionToken = searchParams.get("sessionToken");
 
   if (!input) {
-  return NextResponse.json({ error: "入力が必要です" }, { status: 400 });
+    return NextResponse.json({ error: "入力が必要です" }, { status: 400 });
   }
 
   if (!sessionToken) {
     return NextResponse.json(
-  { error: "セッショントークンが必要です" },
+      { error: "セッショントークンが必要です" },
       { status: 400 }
     );
   }
@@ -69,24 +69,30 @@ export async function GET(request: NextRequest) {
 
     const suggestions = data.suggestions ?? [];
 
-    const results = suggestions.map((suggestion) => {
+    const results = suggestions
+      .map((suggestion) => {
         return {
-            placeId: suggestion.placePrediction?.placeId,
-            placeName: suggestion.placePrediction?.structuredFormat?.mainText?.text,
-            address_text: suggestion.placePrediction?.structuredFormat?.secondaryText?.text
-        }
-    }).filter(
+          placeId: suggestion.placePrediction?.placeId,
+          placeName:
+            suggestion.placePrediction?.structuredFormat?.mainText?.text,
+          address_text:
+            suggestion.placePrediction?.structuredFormat?.secondaryText?.text,
+        };
+      })
+      .filter(
         (suggestion): suggestion is AddressSuggestion =>
           !!suggestion.placeId &&
-        !!suggestion.placeName &&
-        !!suggestion.address_text
+          !!suggestion.placeName &&
+          !!suggestion.address_text
       );
-    //   console.log("suggestion", results);
+    // console.log("suggestion", results);
 
-    
     return NextResponse.json(results);
   } catch (error) {
     console.error("Error in autocomplete route:", error);
-  return NextResponse.json({ error: "サーバー内部でエラーが発生しました" });
+    return NextResponse.json(
+      { error: "サーバー内部でエラーが発生しました" },
+      { status: 500 }
+    );
   }
 }

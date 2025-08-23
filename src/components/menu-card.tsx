@@ -3,11 +3,12 @@ import Image from "next/image";
 
 interface MenuCardProps {
   menu: Menu;
+  onClick?: (menu: Menu) => void;
 }
 
-export default function MenuCard({ menu }: MenuCardProps) {
+export default function MenuCard({ menu, onClick }: MenuCardProps) {
   return (
-    <div className="cursor-pointer">
+    <div onClick={() => onClick?.(menu)} className="cursor-pointer">
       <div className="relative aspect-square rounded-lg overflow-hidden">
         <Image
           src={menu.photoUrl}

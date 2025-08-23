@@ -299,7 +299,7 @@ export async function getPlaceDetails(
   }
 
   const data: GooglePlaceDetailsApiResponse = await response.json();
-  //console.log("data", data);
+  // console.log("data", data);
 
   const results: PlaceDetailsAll = {};
 
@@ -313,7 +313,7 @@ export async function getPlaceDetails(
     results.primaryType = data.primaryType;
   }
   if (fields.includes("photos")) {
-    results.photoUrl = "/no_image.png"
+    results.photoUrl = "/images/no_image.png"
     // data.photos?.[0]?.name
     //   ? await getPhotoUrl(data.photos[0].name, 1200)
     //   : "/no_image.png";

@@ -83,7 +83,7 @@ export default function PlaeSearchBar({ lat, lng }: PlaeSearchBarProps) {
   };
 
   const handleSelectSuggestion = (suggestion: RestaurantSuggestion) => {
-    console.log("Selected suggestion:", suggestion);
+    // console.log("Selected suggestion:", suggestion);
     if (suggestion.type === "placePrediction") {
       router.push(
         `/restaurant/${suggestion.placeId}?sessionToken=${sessionToken}`

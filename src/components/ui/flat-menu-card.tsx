@@ -3,13 +3,14 @@ import { Card } from "./card";
 import { Menu } from "@/types";
 
 interface FlatMenuCardProps {
-    menu:Menu
+  menu: Menu;
+  onClick?: (menu: Menu) => void;
 }
 
-export default function FlatMenuCard({menu}:FlatMenuCardProps) {
+export default function FlatMenuCard({ menu, onClick }: FlatMenuCardProps) {
   return (
     <Card className="p-0 overflow-hidden">
-      <div className="flex flex-1">
+      <div onClick={() => onClick?.(menu)} className="flex flex-1">
         <div className="w-3/5 p-4">
           <p className="font-bold">{menu.name}</p>
           <p className="text-muted-foreground">¥{menu.price}</p>

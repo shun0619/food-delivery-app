@@ -4,6 +4,7 @@ import MenuSheet from "./menu-sheet";
 import PlaceSearchBar from "./place-search-bar";
 import AddressModal from "./address-modal";
 import { fetchLocation } from "@/lib/restaurants/api";
+import Cart from "./cart";
 
 async function Header() {
   const { lat, lng } = await fetchLocation();
@@ -22,7 +23,7 @@ async function Header() {
         ) : (
           <div>住所を登録してください</div>
         )}
-        <div>カート</div>
+        <Cart/>
       </div>
     </header>
   );
