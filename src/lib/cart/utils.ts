@@ -1,7 +1,13 @@
-import { Cart } from "@/types";
+import { Cart, CartItem } from "@/types";
 
-const sumItems = (cart: Cart) =>
-  cart.cart_items.reduce((sum, item) => sum + item.quantity, 0);
+export const sumItems = (cart_items: CartItem[]) =>
+  cart_items.reduce((sum, item) => sum + item.quantity, 0);
+
+ export const calculateItemTotal = (item: CartItem): number =>
+    item.quantity * item.menus.price;
+
+ export const calculateSubTotal = (items: CartItem[]) =>
+    items.reduce((sum, item): number => sum + calculateItemTotal(item), 0);
 
 export function computeCartDisplayLogic(
   carts: Cart[] | undefined,
@@ -22,7 +28,7 @@ export function computeCartDisplayLogic(
     return {
       displayMode: "cartSheet",
       sheetCart: only,
-      cartCount: sumItems(only),
+      cartCount: sumItems(only.cart_items),
     };
   }
 
@@ -31,7 +37,7 @@ export function computeCartDisplayLogic(
     return {
       displayMode: "cartSheet",
       sheetCart: selectedCart,
-      cartCount: sumItems(selectedCart),
+      cartCount: sumItems(selectedCart.cart_items),
     };
   }
 
@@ -40,7 +46,7 @@ export function computeCartDisplayLogic(
     return {
       displayMode: "cartSheet",
       sheetCart: targetCart,
-      cartCount: sumItems(targetCart),
+      cartCount: sumItems(targetCart.cart_items),
     };
   }
 

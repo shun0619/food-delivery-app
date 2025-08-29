@@ -54,7 +54,8 @@ export async function GET(request: NextRequest) {
       );
 
       if (!restaurantData || error) {
-        throw new Error(`レストランデータの取得に失敗しました。${error}`);
+        // throw new Error(`レストランデータの取得に失敗しました。${error}`);
+        console.error("レストランデータの取得に失敗しました。", error);
       }
       return {
         ...cart,
@@ -70,8 +71,8 @@ export async function GET(request: NextRequest) {
             },
           };
         }),
-        restaurantName: restaurantData.displayName,
-        photoUrl: restaurantData.photoUrl!,
+        restaurantName: restaurantData?.displayName ?? "不明なお店",
+        photoUrl: restaurantData?.photoUrl ?? "/no_image.png",
       };
     });
 

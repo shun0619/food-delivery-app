@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/tooltip";
 import { updateCartItemAction } from "@/app/(private)/actions/cartActions";
 import { KeyedMutator } from "swr";
+import { calculateItemTotal, calculateSubTotal } from "@/lib/cart/utils";
 
 interface cartSheetProps {
   cart: Cart | null;
@@ -38,11 +39,11 @@ export default function CartSheet({
   openCart,
   mutateCart,
 }: cartSheetProps) {
-  const calculateItemTotal = (item: CartItem): number =>
-    item.quantity * item.menus.price;
+  // const calculateItemTotal = (item: CartItem): number =>
+  //   item.quantity * item.menus.price;
 
-  const calculateSubTotal = (items: CartItem[]) =>
-    items.reduce((sum, item): number => sum + calculateItemTotal(item), 0);
+  // const calculateSubTotal = (items: CartItem[]) =>
+  //   items.reduce((sum, item): number => sum + calculateItemTotal(item), 0);
 
   const handleUpdateCartItem = async (value: string, cartItemId: number) => {
     if (!cart) return;
@@ -184,7 +185,7 @@ export default function CartSheet({
             </div>
             <SheetClose asChild>
               <Button asChild>
-                <Link href={`/checkout/${cart.restaurant_id}`}>
+                <Link href={`/restaurant/${cart.restaurant_id}/checkout`}>
                   お会計に進む
                 </Link>
               </Button>

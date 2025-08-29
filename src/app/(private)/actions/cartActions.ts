@@ -1,17 +1,20 @@
 "use server";
 
 import { createClient } from "@/app/utils/supabase/server";
+import { calculateSubTotal } from "@/lib/cart/utils";
 import { getPlaceDetails } from "@/lib/restaurants/api";
 import { Cart, Menu } from "@/types";
 import { redirect } from "next/navigation";
 
-type addToCartActionResponse = {
-  type: "new";
-  cart: Cart;
-} | {
-  type: "update";
-  id: number;
-};
+type addToCartActionResponse =
+  | {
+      type: "new";
+      cart: Cart;
+    }
+  | {
+      type: "update";
+      id: number;
+    };
 
 export async function addToCartAction(
   selectedItem: Menu,
@@ -207,5 +210,94 @@ export async function updateCartItemAction(
   if (updateCartItemError) {
     console.error("カートアイテムの更新に失敗しました。", updateCartItemError);
     throw new Error("カートアイテムの更新に失敗しました。");
+  }
+}
+
+export async function checkoutAction(
+  cartId: number,
+  fee: number,
+  service: number,
+  delivery: number
+) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    redirect("/login");
+  }
+
+  const { data: cart, error: cartsError } = await supabase
+    .from("carts")
+    .select(
+      `
+    id,
+    restaurant_id,
+    user_id,
+      cart_items (
+        id,
+        quantity,
+        menu_id,
+          menus (
+          id,
+          name,
+          price,
+          image_path
+        )
+    )
+  `
+    )
+    .eq("id", cartId)
+    .single();
+
+  if (cartsError) {
+    console.error("カートデータの取得に失敗しました。", cartsError);
+    throw new Error("カートデータの取得に失敗しました。");
+  }
+  const { restaurant_id, user_id, cart_items } = cart;
+
+  const subtotal = cart_items.reduce((total, item) => total + item.quantity * item.menus.price, 0);
+  const total = subtotal + fee + service + delivery;
+
+  // ordersテーブルにデータを挿入
+  const {data:order,error:orderError} = await supabase.from("orders").insert({
+    restaurant_id: restaurant_id,
+    user_id: user_id,
+    fee,
+    service,
+    delivery,
+    subtotal_price: subtotal,
+    total_price: total,
+  }).select("id").single();
+
+  if (orderError) {
+    console.error("注文の作成に失敗しました。", orderError);
+    throw new Error("注文の作成に失敗しました。");
+  }
+
+  // order_itemsテーブルにデータを挿入
+  const {data:order_items,error:orderItemsError} = await supabase.from("order_items").insert(cart_items.map((item) => ({
+    quantity:item.quantity,
+    order_id:order.id,
+    menu_id:item.menu_id,
+    price:item.menus.price,
+    image_path:item.menus.image_path,
+    name:item.menus.name,
+  })));
+
+  if (orderItemsError) {
+    console.error("注文アイテムの作成に失敗しました。", orderItemsError);
+    throw new Error("注文アイテムの作成に失敗しました。");
+  }
+
+
+  // カートデータを削除
+  const {error:deleteCartError} = await supabase.from("carts").delete().eq("id",cartId);
+
+  if (deleteCartError) {
+    console.error("カートの削除に失敗しました。", deleteCartError);
+    throw new Error("カートの削除に失敗しました。");
   }
 }

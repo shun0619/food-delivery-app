@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Cart, CartItem } from "@/types";
+import { calculateItemTotal, calculateSubTotal, sumItems } from "@/lib/cart/utils";
 
 interface CartsDropDownProps {
   carts: Cart[];
@@ -21,14 +22,14 @@ export default function CartDropDown({
   setSelectedCart,
   openCart,
 }: CartsDropDownProps) {
-  const calculateItemTotal = (item: CartItem): number =>
-    item.quantity * item.menus.price;
+  // const calculateItemTotal = (item: CartItem): number =>
+  //   item.quantity * item.menus.price;
 
-  const calculateSubTotal = (items: CartItem[]) =>
-    items.reduce((sum, item): number => sum + calculateItemTotal(item), 0);
+  // const calculateSubTotal = (items: CartItem[]) =>
+  //   items.reduce((sum, item): number => sum + calculateItemTotal(item), 0);
 
-  const calculateTotalQuantity = (items: CartItem[]) =>
-    items.reduce((sum, item): number => sum + item.quantity, 0);
+  // const calculateTotalQuantity = (items: CartItem[]) =>
+  //   items.reduce((sum, item): number => sum + item.quantity, 0);
 
   return (
     <DropdownMenu>
@@ -66,7 +67,8 @@ export default function CartDropDown({
               </div>
             </div>
             <div className="flex items-center justify-center size-7 font-medium rounded-full bg-primary text-popover text-xs">
-              {calculateTotalQuantity(cart.cart_items)}
+              {/* {calculateTotalQuantity(cart.cart_items)} */}
+              {sumItems(cart.cart_items)}
             </div>
           </DropdownMenuItem>
         ))}
