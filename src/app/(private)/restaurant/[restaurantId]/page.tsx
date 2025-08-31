@@ -37,7 +37,7 @@ export default async function RestaurantPage({
       <div className="animate-in fade-in-0 slide-in-from-top-4 duration-700">
         <div className="h-80 rounded-2xl shadow-modern-xl relative overflow-hidden group">
           <Image
-            src={restaurant?.photoUrl!}
+            src={restaurant?.photoUrl ?? "/no_image.png"}
             fill
             alt={restaurant?.displayName ?? "レストラン画像"}
             className="object-cover transition-transform duration-700 group-hover:scale-105"
